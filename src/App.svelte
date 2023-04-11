@@ -1,7 +1,7 @@
 <script>
     import {fabric} from "fabric";
     import {maxRectId} from "./utils/utils";
-    import {clearCanvas} from "./utils/utils";
+    // import {clearCanvas} from "./utils/utils";
     import {initCanvas} from "./utils/utils";
 
     let toggleDrug = document.getElementById("toggle-drug");
@@ -100,7 +100,14 @@
             group_id: rect_id
         });
         canvas.add(group.val);
+        clearCanvas(group_objects)
         canvas.requestRenderAll();
+    }
+
+    function clearCanvas(group_objects) {
+        group_objects.forEach((o)=>{
+            canvas.remove(o)
+        })
     }
 
     function groupObjects1(event) {

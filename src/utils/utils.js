@@ -10,13 +10,13 @@ export function maxRectId(canvas) {
     return max_id;
 }
 
-export function clearCanvas(canvas) {
-    canvas.getObjects().forEach((o)=>{
-        if(o !== canvas.backgroundImage) {
-            canvas.remove(o)
-        }
-    })
-}
+// export function clearCanvas(canvas) {
+//     canvas.getObjects().forEach((o)=>{
+//         if(o !== canvas.backgroundImage) {
+//             canvas.remove(o)
+//         }
+//     })
+// }
 
 export function initCanvas(id) {
     return new fabric.Canvas(id, {
