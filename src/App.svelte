@@ -1,5 +1,6 @@
 <script>
     import {fabric} from "fabric";
+    import {maxRectId} from "./utils/utils";
 
     let toggleDrug = document.getElementById("toggle-drug");
     let toggleDrawing = document.getElementById("toggle-drawing");
@@ -62,13 +63,7 @@
     }
 
     function createRect() {
-        let max_id = 0;
-        canvas.getObjects('rect').forEach((o)=>{
-            if(o.rect_id > max_id) {
-                max_id = o.rect_id;
-            }
-        })
-        console.log(max_id);
+        let max_id = maxRectId(canvas);
         const rect = new fabric.Rect({
             width: 100,
             height: 100,
