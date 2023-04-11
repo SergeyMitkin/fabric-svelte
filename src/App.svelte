@@ -1,12 +1,11 @@
 <script>
     import {fabric} from "fabric";
-    import {onMount} from 'svelte';
 
     let toggleDrug = document.getElementById("toggle-drug");
     let toggleDrawing = document.getElementById("toggle-drawing");
     let clearButton = document.getElementById("clear-canvas");
     let rectButton = document.getElementById("rect-button");
-    let circleButton = document.getElementById("circle-button");
+    let textButton = document.getElementById("text-button");
     let groupButton = document.getElementById("group-button");
     let ungroupButton = document.getElementById("ungroup-button");
 
@@ -72,20 +71,21 @@
             originX: 'center',
             originY: 'center',
         })
+        rect.on('selected', ()=>{
+            textButton.removeAttribute('hidden');
+        })
+        rect.on('deselected', ()=>{
+            textButton.setAttribute('hidden', '');
+        })
         canvas.add(rect);
         canvas.renderAll();
     }
 
-    function createCircle() {
-        const circle = new fabric.Circle({
-            radius: 50,
-            fill: 'orange',
-            left: canvCenter.left,
-            top: canvCenter.top,
-            originX: 'center',
-            originY: 'center',
+    function createText() {
+        const text = new fabric.Textbox('Текст' , {
+            fontSize: 20
         })
-        canvas.add(circle);
+        canvas.add(text);
         canvas.renderAll();
     }
 
@@ -134,7 +134,7 @@
     toggleDrawing.addEventListener('click', toggleMode);
     clearButton.addEventListener('click', clearCanvas);
     rectButton.addEventListener('click', createRect);
-    circleButton.addEventListener('click', createCircle);
+    textButton.addEventListener('click', createText);
     groupButton.addEventListener('click', groupObjects);
     ungroupButton.addEventListener('click', groupObjects);
 </script>
