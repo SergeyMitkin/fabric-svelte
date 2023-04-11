@@ -53,6 +53,7 @@
             canvas.add(group.val);
             canvas.requestRenderAll()
         } else {
+            group.val.destroy();
             const oldGroup = group.val.getObjects();
             canvas.remove(group.val);
             canvas.add(...oldGroup);
