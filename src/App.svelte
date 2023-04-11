@@ -46,24 +46,6 @@
         canvas.renderAll();
     })
 
-    function groupObjects(event) {
-        let shouldGroup = event.target.getAttribute('data-group');
-        if(shouldGroup === 'group') {
-            const objects = canvas.getObjects();
-            group.val = new fabric.Group(objects, {cornerColor: 'white'});
-            clearCanvas(canvas);
-            canvas.add(group.val);
-            canvas.requestRenderAll()
-        } else {
-            group.val.destroy();
-            const oldGroup = group.val.getObjects();
-            canvas.remove(group.val);
-            canvas.add(...oldGroup);
-            group.val = null;
-            canvas.requestRenderAll();
-        }
-    }
-
     function createRect() {
         let max_id = maxRectId(canvas);
         let width = 100;
@@ -88,14 +70,51 @@
 
     function createText() {
         let activeRect = canvas.getActiveObject();
-
         const text = new fabric.Textbox('Текст' , {
             fontSize: 20,
             left: activeRect.left,
             top: activeRect.top,
+            rect_id: activeRect.rect_id
         })
+        text.on('deselected', () => {
+            groupObjects(activeRect.rect_id);
+        })
+        canvas.setActiveObject(text);
         canvas.add(text);
         canvas.renderAll();
+    }
+
+    function groupObjects(rect_id) {
+        let objects = canvas.getObjects();
+        let group_objects = [];
+        let group_index = 0
+        for (let i = 0; i < objects.length; i++) {
+            let obj = objects[i];
+            if ((obj instanceof fabric.Rect || obj instanceof fabric.Textbox) && obj.rect_id === rect_id){
+                group_objects[group_index] = objects[i];
+                group_index++;
+            }
+        }
+        console.log(objects);
+        console.log(group_objects);
+    }
+
+    function groupObjects1(event) {
+        let shouldGroup = event.target.getAttribute('data-group');
+        if(shouldGroup === 'group') {
+            const objects = canvas.getObjects();
+            group.val = new fabric.Group(objects, {cornerColor: 'white'});
+            clearCanvas(canvas);
+            canvas.add(group.val);
+            canvas.requestRenderAll()
+        } else {
+            group.val.destroy();
+            const oldGroup = group.val.getObjects();
+            canvas.remove(group.val);
+            canvas.add(...oldGroup);
+            group.val = null;
+            canvas.requestRenderAll();
+        }
     }
 
     function toggleMode(event) {
