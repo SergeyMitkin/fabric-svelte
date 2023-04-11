@@ -6,11 +6,12 @@
 
     let toggleDrug = document.getElementById("toggle-drug");
     let toggleDrawing = document.getElementById("toggle-drawing");
-    let clearButton = document.getElementById("clear-canvas");
+    // let clearButton = document.getElementById("clear-canvas");
     let rectButton = document.getElementById("rect-button");
     let textButton = document.getElementById("text-button");
-    let groupButton = document.getElementById("group-button");
-    let ungroupButton = document.getElementById("ungroup-button");
+    let editTextButton = document.getElementById("edit-text-button");
+    // let groupButton = document.getElementById("group-button");
+    // let ungroupButton = document.getElementById("ungroup-button");
 
     let mousePressed = false;
     let currentMode;
@@ -83,33 +84,20 @@
         canvas.renderAll();
     }
 
-    function groupObjects(rect_id) {
-        let objects = canvas.getObjects();
-        let group_objects = [];
-        let group_index = 0
-        for (let i = 0; i < objects.length; i++) {
-            let obj = objects[i];
-            if ((obj instanceof fabric.Rect || obj instanceof fabric.Textbox) && obj.rect_id === rect_id){
-                group_objects[group_index] = objects[i];
-                group_index++;
+    function editText() {
+        let activeGroup = canvas.getActiveObject();
+        activeGroup.destroy();
+        let objects = activeGroup.getObjects();
+        canvas.remove(activeGroup);
+        canvas.add(...objects);
+        activeGroup = null;
+        canvas.requestRenderAll();
+        for (var i = 0; i < objects.length; i++) {
+            var obj = objects[i];
+            if (obj instanceof fabric.Textbox) {
+                canvas.setActiveObject(obj);
             }
         }
-        let group = new fabric.Group(group_objects, {
-            cornerColor: 'white',
-            rect_id: rect_id
-        });
-        group.on('selected', () => {
-            console.log(group.rect_id);
-        })
-        canvas.add(group);
-        clearCanvas(group_objects)
-        canvas.requestRenderAll();
-    }
-
-    function clearCanvas(group_objects) {
-        group_objects.forEach((o) => {
-            canvas.remove(o)
-        })
     }
 
     function groupObjects1(event) {
@@ -128,6 +116,38 @@
             group.val = null;
             canvas.requestRenderAll();
         }
+    }
+
+    function groupObjects(rect_id) {
+        let objects = canvas.getObjects();
+        let group_objects = [];
+        let group_index = 0;
+        for (let i = 0; i < objects.length; i++) {
+            let obj = objects[i];
+            if ((obj instanceof fabric.Rect || obj instanceof fabric.Textbox) && obj.rect_id === rect_id){
+                group_objects[group_index] = objects[i];
+                group_index++;
+            }
+        }
+        let group = new fabric.Group(group_objects, {
+            cornerColor: 'white',
+            rect_id: rect_id
+        });
+        group.on('deselected', () => {
+            editTextButton.setAttribute('hidden', '');
+        })
+        group.on('selected', () => {
+            editTextButton.removeAttribute('hidden');
+        })
+        canvas.add(group);
+        clearCanvas(group_objects);
+        canvas.requestRenderAll();
+    }
+
+    function clearCanvas(group_objects) {
+        group_objects.forEach((o) => {
+            canvas.remove(o);
+        })
     }
 
     function toggleMode(event) {
@@ -156,10 +176,11 @@
 
     toggleDrug.addEventListener('click', toggleMode);
     toggleDrawing.addEventListener('click', toggleMode);
-    clearButton.addEventListener('click', clearCanvas);
+    // clearButton.addEventListener('click', clearCanvas);
     rectButton.addEventListener('click', createRect);
     textButton.addEventListener('click', createText);
-    groupButton.addEventListener('click', groupObjects);
-    ungroupButton.addEventListener('click', groupObjects);
+    editTextButton.addEventListener('click', editText);
+    // groupButton.addEventListener('click', groupObjects);
+    // ungroupButton.addEventListener('click', groupObjects);
 </script>
 
