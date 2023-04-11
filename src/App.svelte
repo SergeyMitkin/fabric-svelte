@@ -1,6 +1,8 @@
 <script>
     import {fabric} from "fabric";
     import {maxRectId} from "./utils/utils";
+    import {clearCanvas} from "./utils/utils";
+    import {initCanvas} from "./utils/utils";
 
     let toggleDrug = document.getElementById("toggle-drug");
     let toggleDrawing = document.getElementById("toggle-drawing");
@@ -64,19 +66,18 @@
 
     function createRect() {
         let max_id = maxRectId(canvas);
+        let width = 100;
+        let height = 100;
         const rect = new fabric.Rect({
-            width: 100,
-            height: 100,
+            width: width,
+            height: height,
             fill: 'rgba(213,0,0,0.5)',
-            left: canvCenter.left,
-            top: canvCenter.top,
-            originX: 'center',
-            originY: 'center',
+            left: canvCenter.left - width/2,
+            top: canvCenter.top - height/2,
             rect_id: max_id + 1
         })
         rect.on('selected', () => {
             textButton.removeAttribute('hidden');
-            alert(rect.id);
         })
         rect.on('deselected', () => {
             textButton.setAttribute('hidden', '');
@@ -86,28 +87,15 @@
     }
 
     function createText() {
+        let activeRect = canvas.getActiveObject();
+
         const text = new fabric.Textbox('Текст' , {
-            fontSize: 20
+            fontSize: 20,
+            left: activeRect.left,
+            top: activeRect.top,
         })
         canvas.add(text);
         canvas.renderAll();
-    }
-
-    function initCanvas(id) {
-        return new fabric.Canvas(id, {
-            width: 500,
-            height: 500,
-            backgroundImage: 'fon.jpg',
-            selection: false
-        });
-    }
-
-    function clearCanvas() {
-        canvas.getObjects().forEach((o)=>{
-            if(o !== canvas.backgroundImage) {
-                canvas.remove(o)
-            }
-        })
     }
 
     function toggleMode(event) {

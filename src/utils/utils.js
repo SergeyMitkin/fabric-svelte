@@ -1,3 +1,5 @@
+import {fabric} from "fabric";
+
 export function maxRectId(canvas) {
     let max_id = 0;
     canvas.getObjects('rect').forEach((o)=>{
@@ -6,4 +8,21 @@ export function maxRectId(canvas) {
         }
     })
     return max_id;
+}
+
+export function clearCanvas(canvas) {
+    canvas.getObjects().forEach((o)=>{
+        if(o !== canvas.backgroundImage) {
+            canvas.remove(o)
+        }
+    })
+}
+
+export function initCanvas(id) {
+    return new fabric.Canvas(id, {
+        width: 500,
+        height: 500,
+        backgroundImage: 'fon.jpg',
+        selection: false
+    });
 }
