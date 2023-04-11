@@ -95,8 +95,12 @@
                 group_index++;
             }
         }
-        console.log(objects);
-        console.log(group_objects);
+        group.val = new fabric.Group(group_objects, {
+            cornerColor: 'white',
+            group_id: rect_id
+        });
+        canvas.add(group.val);
+        canvas.requestRenderAll();
     }
 
     function groupObjects1(event) {
