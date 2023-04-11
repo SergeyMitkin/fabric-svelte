@@ -1,18 +1,24 @@
 <script>
     import {fabric} from "fabric";
     import {onMount} from 'svelte';
+
+    let toggleDrug = document.getElementById("toggle-drug");
+    let toggleDrawing = document.getElementById("toggle-drawing");
+    let clearButton = document.getElementById("clear-canvas");
+    let rectButton = document.getElementById("rect-button");
+    let circleButton = document.getElementById("circle-button");
+    let groupButton = document.getElementById("group-button");
+    let ungroupButton = document.getElementById("ungroup-button");
+
+    let mousePressed = false;
     let currentMode;
     const modes = {
         drug: 'drug',
         drawing: 'drawing'
     };
-
-    let toggleDrug = document.getElementById("toggle-drug");
-    let toggleDrawing = document.getElementById("toggle-drawing");
-    let clearButton = document.getElementById("clear-canvas");
-
-    let mousePressed = false;
     const canvas = initCanvas('canvas');
+    const canvCenter = canvas.getCenter();
+    const group = {};
 
     canvas.on('mouse:move', (event) => {
         if(mousePressed && currentMode === modes.drug) {
@@ -38,6 +44,50 @@
         canvas.renderAll();
     })
 
+    function groupObjects(event) {
+        let shouldGroup = event.target.getAttribute('data-group');
+        if(shouldGroup === 'group') {
+            const objects = canvas.getObjects();
+            group.val = new fabric.Group(objects, {cornerColor: 'white'});
+            clearCanvas(canvas);
+            canvas.add(group.val);
+            canvas.requestRenderAll()
+        } else {
+            const oldGroup = group.val.getObjects();
+            canvas.remove(group.val);
+            canvas.add(...oldGroup);
+            group.val = null;
+            canvas.requestRenderAll();
+        }
+    }
+
+    function createRect() {
+        const rect = new fabric.Rect({
+            width: 100,
+            height: 100,
+            fill: 'rgba(213,0,0,0.5)',
+            left: canvCenter.left,
+            top: canvCenter.top,
+            originX: 'center',
+            originY: 'center',
+        })
+        canvas.add(rect);
+        canvas.renderAll();
+    }
+
+    function createCircle() {
+        const circle = new fabric.Circle({
+            radius: 50,
+            fill: 'orange',
+            left: canvCenter.left,
+            top: canvCenter.top,
+            originX: 'center',
+            originY: 'center',
+        })
+        canvas.add(circle);
+        canvas.renderAll();
+    }
+
     function initCanvas(id) {
         return new fabric.Canvas(id, {
             width: 500,
@@ -55,8 +105,8 @@
         })
     }
 
-    function toggleMode(mode) {
-        mode = mode.target.getAttribute('data-toggle');
+    function toggleMode(event) {
+        let mode = event.target.getAttribute('data-toggle');
         if(mode === modes.drug){
             if(currentMode === modes.drug) {
                 currentMode = '';
@@ -71,7 +121,7 @@
                 canvas.isDrawingMode = false;
                 canvas.renderAll();
             } else {
-                canvas.freeDrawingBrush.color = 'rgba(213,0,0,0.5)'
+                canvas.freeDrawingBrush.color = 'red'
                 currentMode = modes.drawing;
                 canvas.isDrawingMode = true;
                 canvas.renderAll();
@@ -82,5 +132,9 @@
     toggleDrug.addEventListener('click', toggleMode);
     toggleDrawing.addEventListener('click', toggleMode);
     clearButton.addEventListener('click', clearCanvas);
+    rectButton.addEventListener('click', createRect);
+    circleButton.addEventListener('click', createCircle);
+    groupButton.addEventListener('click', groupObjects);
+    ungroupButton.addEventListener('click', groupObjects);
 </script>
 
