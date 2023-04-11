@@ -20,7 +20,6 @@
     };
     const canvas = initCanvas('canvas');
     const canvCenter = canvas.getCenter();
-    const group = {};
 
     canvas.on('mouse:move', (event) => {
         if(mousePressed && currentMode === modes.drug) {
@@ -95,17 +94,20 @@
                 group_index++;
             }
         }
-        group.val = new fabric.Group(group_objects, {
+        let group = new fabric.Group(group_objects, {
             cornerColor: 'white',
-            group_id: rect_id
+            rect_id: rect_id
         });
-        canvas.add(group.val);
+        group.on('selected', () => {
+            console.log(group.rect_id);
+        })
+        canvas.add(group);
         clearCanvas(group_objects)
         canvas.requestRenderAll();
     }
 
     function clearCanvas(group_objects) {
-        group_objects.forEach((o)=>{
+        group_objects.forEach((o) => {
             canvas.remove(o)
         })
     }
