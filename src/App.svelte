@@ -62,6 +62,13 @@
     }
 
     function createRect() {
+        let max_id = 0;
+        canvas.getObjects('rect').forEach((o)=>{
+            if(o.rect_id > max_id) {
+                max_id = o.rect_id;
+            }
+        })
+        console.log(max_id);
         const rect = new fabric.Rect({
             width: 100,
             height: 100,
@@ -70,11 +77,13 @@
             top: canvCenter.top,
             originX: 'center',
             originY: 'center',
+            rect_id: max_id + 1
         })
-        rect.on('selected', ()=>{
+        rect.on('selected', () => {
             textButton.removeAttribute('hidden');
+            alert(rect.id);
         })
-        rect.on('deselected', ()=>{
+        rect.on('deselected', () => {
             textButton.setAttribute('hidden', '');
         })
         canvas.add(rect);
